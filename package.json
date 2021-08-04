@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "node src/index.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint:style": "prettier --check ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,9 @@
     "url": "https://github.com/RiiConnect24/riitag/issues"
   },
   "homepage": "https://github.com/RiiConnect24/riitag#readme",
+  "devDependencies": {
+    "prettier": "2.3.2"
+  },
   "dependencies": {
     "@sentry/node": "^6.10.0",
     "axios": "^0.21.1",

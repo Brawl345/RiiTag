@@ -14,3 +14,4 @@ data/miis
 public/assets/css/.sass-cache/*
 coins.db
 games.db
+.idea/

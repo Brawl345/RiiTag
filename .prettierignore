@@ -1,0 +1,10 @@
+.vscode
+data
+node_modules
+package-lock.json
+bootstrap.min.js
+image-picker.js
+image-picker.min.js
+jquery.min.js
+*.json
+*.css
