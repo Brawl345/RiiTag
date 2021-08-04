@@ -1,7 +1,7 @@
 class UserManager {
-    load(json) {
-        return JSON.parse(json);
-    }
+  load(json) {
+    return JSON.parse(json);
+  }
 }
 
 module.exports = UserManager;

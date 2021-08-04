@@ -6,7 +6,8 @@
   "scripts": {
     "test": "node src/index.js",
     "start": "node app.js",
-    "lint:style": "prettier --check ."
+    "lint:style": "prettier --check .",
+    "fix:style": " prettier --write ."
   },
   "repository": {
     "type": "git",
