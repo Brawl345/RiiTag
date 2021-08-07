@@ -228,7 +228,7 @@ async function tagRoute(req, res) {
       ) ||
       !fs.existsSync(path.resolve(dataFolder, 'tag', `${req.params.id}.png`))
     ) {
-      res.status(404).render('notfound.pug');
+      return res.status(404).render('notfound.pug');
     }
     const file = path.resolve(dataFolder, 'tag', `${req.params.id}.png`);
     const s = fs.createReadStream(file);
@@ -236,8 +236,9 @@ async function tagRoute(req, res) {
       res.set('Content-Type', 'image/png');
       s.pipe(res);
     });
+    return s;
   } catch {
-    res.status(404).render('notfound.pug');
+    return res.status(404).render('notfound.pug');
   }
 }
 
@@ -254,7 +255,7 @@ async function tagMaxRoute(req, res) {
         path.resolve(dataFolder, 'tag', `${req.params.id}.max.png`)
       )
     ) {
-      res.status(404).render('notfound.pug');
+      return res.status(404).render('notfound.pug');
     }
     const file = path.resolve(dataFolder, 'tag', `${req.params.id}.max.png`);
     const s = fs.createReadStream(file);
@@ -262,8 +263,9 @@ async function tagMaxRoute(req, res) {
       res.set('Content-Type', 'image/png');
       s.pipe(res);
     });
+    return s;
   } catch {
-    res.status(404).render('notfound.pug');
+    return res.status(404).render('notfound.pug');
   }
 }
 
@@ -498,15 +500,29 @@ async function wiinertagRoute(req, res) {
   );
 }
 
-function userIdRoute(req, res) {
+async function userIdRoute(req, res) {
   const userData = getUserData(req.params.id);
 
   if (!userData) {
-    res.status(404).render('notfound.pug');
-    return;
+    return res.status(404).render('notfound.pug');
   }
 
-  res.render('tagpage.pug', {
+  if (!fs.existsSync(path.resolve(dataFolder, 'tag'))) {
+    fs.mkdirSync(path.resolve(dataFolder, 'tag'));
+  }
+  if (
+    !fs.existsSync(path.resolve(dataFolder, 'tag', `${req.params.id}.max.png`))
+  ) {
+    try {
+      await getTagEP(req.params.id);
+    } catch (error) {
+      return error === 'Redirect'
+        ? res.redirect('/')
+        : res.status(404).render('notfound.pug');
+    }
+  }
+
+  return res.render('tagpage.pug', {
     id: req.params.id,
     tuser: userData,
     user: req.user,
