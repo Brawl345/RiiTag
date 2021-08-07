@@ -1,3 +1,3 @@
-var pm = new PageManager();
+const pm = new PageManager();
 
 pm.registerDefault('dashboard');

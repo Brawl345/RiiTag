@@ -1,38 +1,39 @@
 const fs = require('fs');
 const Canvas = require('canvas');
-const Image = Canvas.Image;
+
+const { Image } = Canvas;
 
 async function savePNG(out, c) {
-  return new Promise(function (resolve, reject) {
-    var t;
+  return new Promise((resolve, reject) => {
+    let t;
     c.createPNGStream()
       .pipe(fs.createWriteStream(out))
-      .on('close', function () {
+      .on('close', () => {
         clearTimeout(t);
         resolve();
       });
 
     t = setTimeout(() => {
-      console.log(out + ' - savePNG Timed Out');
+      console.log(`${out} - savePNG Timed Out`);
       reject();
     }, 7500);
   });
 }
 
 async function getImage(source) {
-  var img = new Image();
-  return new Promise(function (resolve, reject) {
-    var t;
-    img.onload = function () {
+  const img = new Image();
+  return new Promise((resolve, reject) => {
+    let t;
+    img.onload = () => {
       clearTimeout(t);
       resolve(img);
     };
-    img.onerror = function (err) {
+    img.onerror = (err) => {
       clearTimeout(t);
       reject(err);
     };
     t = setTimeout(() => {
-      console.log(source + ' - getImage Timed Out');
+      console.log(`${source} - getImage Timed Out`);
       reject();
     }, 7500);
     console.log(source);

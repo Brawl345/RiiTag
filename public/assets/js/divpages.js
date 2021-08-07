@@ -7,7 +7,7 @@ class PageManager {
   }
 
   getPage(id) {
-    var ret = null;
+    let ret = null;
     this.pages.forEach((page) => {
       if (ret) {
         return;
@@ -32,7 +32,7 @@ class PageManager {
   }
 
   register(id) {
-    var page = new Page(this, id);
+    const page = new Page(this, id);
     this.pages.push(page);
     return page;
   }
@@ -45,7 +45,7 @@ class PageManager {
 class Page {
   constructor(manager, id) {
     this.id = id;
-    this.buttonId = id + '-btn';
+    this.buttonId = `${id  }-btn`;
     this.manager = manager;
 
     this.div = document.getElementById(id);

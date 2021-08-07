@@ -11,7 +11,7 @@ class Cover {
    * Use the game's ID to determine the current region.
    */
   getRegion() {
-    var regionCode = this.game[3];
+    const regionCode = this.game[3];
 
     switch (regionCode) {
       case 'P':
@@ -38,8 +38,8 @@ class Cover {
    * @param {string} game
    */
   getConsole() {
-    var consoleCode = this.game[0], // Obtain the console-level code.
-      consoleBase = subString(0, this.game.indexOf('-')); // Strip everything behind the hyphen to obtain the base.
+    const consoleCode = this.game[0]; // Obtain the console-level code.
+      const consoleBase = subString(0, this.game.indexOf('-')); // Strip everything behind the hyphen to obtain the base.
 
     switch (consoleBase) {
       case 'wii':

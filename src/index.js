@@ -1,13 +1,12 @@
 const Canvas = require('canvas');
-const Image = Canvas.Image;
 
 const fs = require('fs');
 const events = require('events');
 
-const savePNG = require('./utils').savePNG;
-const getImage = require('./utils').getImage;
-
 const path = require('path');
+const { savePNG } = require('./utils');
+const { getImage } = require('./utils');
+
 const dataFolder = path.resolve(__dirname, '..', 'data');
 // const outpath = path.resolve(__dirname, "banner.png"); // debug variable
 
@@ -22,16 +21,16 @@ const guests = {
 const guestList = Object.keys(guests);
 guestList.push('undefined');
 
-const defaultDrawOrder = [
-  'overlay',
-  'covers',
-  'flag',
-  'coin',
-  'avatar',
-  'username',
-  'coin_count',
-  'friend_code',
-];
+// const defaultDrawOrder = [
+//   'overlay',
+//   'covers',
+//   'flag',
+//   'coin',
+//   'avatar',
+//   'username',
+//   'coin_count',
+//   'friend_code',
+// ];
 
 class Tag extends events.EventEmitter {
   constructor(user, doMake = true) {
@@ -42,11 +41,13 @@ class Tag extends events.EventEmitter {
     this.savePNG = savePNG;
     this.getImage = getImage;
 
-    if (doMake) this.makeBanner();
+    if (doMake) {
+      this.makeBanner();
+    }
   }
 
-  loadUser(json_string) {
-    return JSON.parse(json_string);
+  loadUser(jsonString) {
+    return JSON.parse(jsonString);
   }
 
   drawText(font, size, style, color, text, x, y) {
@@ -57,143 +58,152 @@ class Tag extends events.EventEmitter {
   }
 
   async drawImage(source, x = 0, y = 0) {
-    var obj = this;
     // console.log(source);
     getImage(source)
-      .then(function (img) {
+      .then((img) => {
         console.log(img);
-        obj.ctx.drawImage(img, x, y);
+        this.ctx.drawImage(img, x, y);
       })
-      .catch(function (err) {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
   }
 
   async drawImageShrink(source, x = 0, y = 0, shrinkx = 0, shrinky = 0) {
-    var obj = this;
     console.log(source);
-    obj.ctx.drawImage(source, x, y, shrinkx, shrinky);
+    this.ctx.drawImage(source, x, y, shrinkx, shrinky);
   }
 
   async getAndDrawImageShrink(source, x = 0, y = 0, shrinkx = 0, shrinky = 0) {
-    var obj = this;
     getImage(source)
-      .then(function (img) {
+      .then((img) => {
         console.log(img);
-        obj.ctx.drawImage(img, x, y, shrinkx, shrinky);
+        this.ctx.drawImage(img, x, y, shrinkx, shrinky);
       })
-      .catch(function (err) {
-        console.error(err);
+      .catch((error) => {
+        console.error(error);
       });
   }
 
   getGameRegion(game) {
     // determine the game's region by its ID
-    var chars = game.split('');
-    var rc = chars[3];
-    if (rc == 'P') {
-      if (this.user.coverregion) {
-        if (this.user.coverregion.toUpperCase().length == 2) {
-          // region names are 2 characters as you can see
-          return this.user.coverregion.toUpperCase();
+    const chars = game.split('');
+    const rc = chars[3];
+    switch (rc) {
+      case 'P': {
+        if (this.user.coverregion) {
+          if (this.user.coverregion.toUpperCase().length === 2) {
+            // region names are 2 characters as you can see
+            return this.user.coverregion.toUpperCase();
+          }
         }
-      } else {
         return 'EN';
       }
-    } else if (rc == 'E') {
-      return 'US';
-    } else if (rc == 'J') {
-      return 'JA';
-    } else if (rc == 'K') {
-      return 'KO';
-    } else if (rc == 'W') {
-      return 'TW';
-    } else {
-      return 'EN';
+      case 'E': {
+        return 'US';
+      }
+      case 'J': {
+        return 'JA';
+      }
+      case 'K': {
+        return 'KO';
+      }
+      case 'W': {
+        return 'TW';
+      }
+      default: {
+        return 'EN';
+      }
     }
   }
 
   getConsoleType(game) {
-    var chars = game.split('');
-    var code = chars[0];
+    const chars = game.split('');
+    const code = chars[0];
     if (game.startsWith('wii-')) {
       return 'wii';
-    } else if (game.startsWith('wiiu-')) {
+    }
+    if (game.startsWith('wiiu-')) {
       return 'wiiu';
-    } else if (game.startsWith('ds-')) {
+    }
+    if (game.startsWith('ds-')) {
       return 'ds';
-    } else if (game.startsWith('3ds-')) {
+    }
+    if (game.startsWith('3ds-')) {
       return '3ds';
-    } else if (code == 'R' || code == 'S') {
-      return 'wii';
-    } else if (code == 'A' || code == 'B') {
-      return 'wiiu';
-    } else {
+    }
+    if (code === 'R' || code === 'S') {
       return 'wii';
     }
+    if (code === 'A' || code === 'B') {
+      return 'wiiu';
+    }
+    return 'wii';
   }
 
   getExtension(covertype, consoletype) {
-    if (consoletype == 'wii') {
-      return 'png';
-    } else if (consoletype != 'wii' && covertype == 'cover') {
-      return 'jpg';
-    } else {
+    if (consoletype === 'wii') {
       return 'png';
     }
+    if (consoletype !== 'wii' && covertype === 'cover') {
+      return 'jpg';
+    }
+    return 'png';
   }
 
   getCoverType(consoletype) {
-    if (consoletype == 'ds' || consoletype == '3ds') {
+    if (consoletype === 'ds' || consoletype === '3ds') {
       return 'box';
-    } else if (this.user.covertype) {
-      return this.user.covertype;
-    } else {
-      return 'cover3D';
     }
+    if (this.user.covertype) {
+      return this.user.covertype;
+    }
+    return 'cover3D';
   }
 
   getCoverWidth(covertype) {
-    if (covertype == 'cover') {
+    if (covertype === 'cover') {
       return 160;
-    } else if (covertype == 'cover3D') {
-      return 176;
-    } else if (covertype == 'disc') {
-      return 160;
-    } else if (covertype == 'box') {
-      return 176;
-    } else {
+    }
+    if (covertype === 'cover3D') {
       return 176;
     }
+    if (covertype === 'disc') {
+      return 160;
+    }
+    if (covertype === 'box') {
+      return 176;
+    }
+    return 176;
   }
 
   getCoverHeight(covertype, consoletype) {
-    if (covertype == 'cover') {
-      if (consoletype == 'ds' || consoletype == '3ds') {
+    if (covertype === 'cover') {
+      if (consoletype === 'ds' || consoletype === '3ds') {
         return 144;
-      } else {
-        return 224;
       }
-    } else if (covertype == 'cover3D') {
-      return 248;
-    } else if (covertype == 'disc') {
-      return 160;
-    } else if (covertype == 'box') {
-      return 158;
-    } else {
+      return 224;
+    }
+    if (covertype === 'cover3D') {
       return 248;
     }
+    if (covertype === 'disc') {
+      return 160;
+    }
+    if (covertype === 'box') {
+      return 158;
+    }
+    return 248;
   }
 
   getCoinImage() {
     if (this.user.coin) {
-      if (this.user.coin == 'default') {
+      if (this.user.coin === 'default') {
         return this.overlay.coin_icon.img;
       }
       return this.user.coin;
-    } else {
-      return 'mario'; // the mario coin is the default image
     }
+    return 'mario'; // the mario coin is the default image
   }
 
   getFont(type) {
@@ -201,20 +211,17 @@ class Tag extends events.EventEmitter {
 
     if (this.overlay[type].font_family) {
       if (
-        this.user.font == 'default' ||
-        this.overlay[type].force_font == 'true'
+        this.user.font === 'default' ||
+        this.overlay[type].force_font === 'true'
       ) {
         return this.overlay[type].font_family;
-      } else {
-        if (this.user.font) {
-          return this.user.font;
-        } else {
-          return defaultFont;
-        }
       }
-    } else {
+      if (this.user.font) {
+        return this.user.font;
+      }
       return defaultFont;
     }
+    return defaultFont;
   }
 
   getCoverUrl(consoletype, covertype, region, game, extension) {
@@ -222,14 +229,12 @@ class Tag extends events.EventEmitter {
   }
 
   async downloadGameCover(game, region, covertype, consoletype, extension) {
-    var can = new Canvas.Canvas(
+    const can = new Canvas.Canvas(
       this.getCoverWidth(covertype),
       this.getCoverHeight(covertype, consoletype)
     );
-    var con = can.getContext('2d');
-    var img;
-
-    img = await getImage(
+    const con = can.getContext('2d');
+    const img = await getImage(
       this.getCoverUrl(consoletype, covertype, region, game, extension)
     );
     con.drawImage(
@@ -272,7 +277,7 @@ class Tag extends events.EventEmitter {
         consoletype,
         extension
       );
-    } catch (e) {
+    } catch {
       try {
         await this.downloadGameCover(
           game,
@@ -281,7 +286,7 @@ class Tag extends events.EventEmitter {
           consoletype,
           extension
         ); // cover might not exist?
-      } catch (e) {
+      } catch {
         try {
           await this.downloadGameCover(
             game,
@@ -290,7 +295,7 @@ class Tag extends events.EventEmitter {
             consoletype,
             extension
           ); // small chance it's US region
-        } catch (e) {
+        } catch {
           return false;
         }
       }
@@ -305,12 +310,12 @@ class Tag extends events.EventEmitter {
     // if (fs.existsSync(path.resolve(dataFolder, "avatars", `${this.user.id}.png`))) {
     //     return;
     // }
-    var can = new Canvas.Canvas(512, 512);
+    const can = new Canvas.Canvas(512, 512);
     if (!fs.existsSync(path.resolve(dataFolder, 'avatars'))) {
       fs.mkdirSync(path.resolve(dataFolder, 'avatars'));
     }
-    var con = can.getContext('2d');
-    var img;
+    const con = can.getContext('2d');
+    let img;
     try {
       img = await getImage(
         `https://cdn.discordapp.com/avatars/${this.user.id}/${this.user.avatar}.png?size=512`
@@ -320,42 +325,42 @@ class Tag extends events.EventEmitter {
         path.resolve(dataFolder, 'avatars', `${this.user.id}.png`),
         can
       );
-    } catch (e) {
-      return false;
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async drawGameCover(game, draw) {
-    var consoletype = this.getConsoleType(game);
-    var covertype = this.getCoverType(consoletype);
-    game = game
+    const consoletype = this.getConsoleType(game);
+    const covertype = this.getCoverType(consoletype);
+    const gameID = game
       .replace('wii-', '')
       .replace('wiiu-', '')
       .replace('3ds-', '')
       .replace('ds-', '');
-    var region = this.getGameRegion(game);
-    var extension = this.getExtension(covertype, consoletype);
-    var cache = await this.cacheGameCover(
-      game,
+    const region = this.getGameRegion(gameID);
+    const extension = this.getExtension(covertype, consoletype);
+    const cache = await this.cacheGameCover(
+      gameID,
       region,
       covertype,
       consoletype,
       extension
     );
     if (cache && draw) {
-      var inc = 0;
-      if (consoletype == 'ds' || consoletype == '3ds') {
-        if (covertype == 'box') {
+      let inc = 0;
+      if (consoletype === 'ds' || consoletype === '3ds') {
+        if (covertype === 'box') {
           inc = 87;
-        } else if (covertype == 'cover') {
+        } else if (covertype === 'cover') {
           inc = 80;
         }
       }
 
-      var coverPath = `${consoletype}-${covertype}-${game}-${region}.png`;
+      let coverPath = `${consoletype}-${covertype}-${gameID}-${region}.png`;
 
       if (!fs.existsSync(path.resolve(dataFolder, 'cache', coverPath))) {
-        var allRegions = [
+        const allRegions = [
           'US',
           'EN',
           'FR',
@@ -372,8 +377,8 @@ class Tag extends events.EventEmitter {
           'TR',
         ];
 
-        for (var r in allRegions) {
-          coverPath = `${consoletype}-${covertype}-${game}-${allRegions[r]}.png`;
+        for (const r in allRegions) {
+          coverPath = `${consoletype}-${covertype}-${gameID}-${allRegions[r]}.png`;
 
           if (fs.existsSync(path.resolve(dataFolder, 'cache', coverPath))) {
             await this.drawImage(
@@ -418,45 +423,41 @@ class Tag extends events.EventEmitter {
   }
 
   async drawMii() {
-    if (!this.user.mii_data || this.user.mii_data == '') {
+    if (!this.user.mii_data || this.user.mii_data === '') {
       this.user.mii_data = 'undefined';
     }
     if (this.overlay.mii) {
-      if (guestList.includes(this.user.mii_data)) {
-        await this.getAndDrawImageShrink(
-          path.resolve(
-            dataFolder,
-            'miis',
-            'guests',
-            `${this.user.mii_data}.png`
-          ),
-          this.overlay.mii.x,
-          this.overlay.mii.y,
-          this.overlay.mii.size,
-          this.overlay.mii.size
-        );
-      } else {
-        await this.getAndDrawImageShrink(
-          path.resolve(dataFolder, 'miis', `${this.user.id}.png`),
-          this.overlay.mii.x,
-          this.overlay.mii.y,
-          this.overlay.mii.size,
-          this.overlay.mii.size
-        ).catch(async function (e) {
-          console.error(
-            "Couldn't render Mii for " +
-              user.id +
-              '. Falling back to undefined.'
-          );
-          await this.getAndDrawImageShrink(
-            path.resolve(dataFolder, 'miis', 'guests', `undefined.png`),
+      await (guestList.includes(this.user.mii_data)
+        ? this.getAndDrawImageShrink(
+            path.resolve(
+              dataFolder,
+              'miis',
+              'guests',
+              `${this.user.mii_data}.png`
+            ),
             this.overlay.mii.x,
             this.overlay.mii.y,
             this.overlay.mii.size,
             this.overlay.mii.size
-          );
-        });
-      }
+          )
+        : this.getAndDrawImageShrink(
+            path.resolve(dataFolder, 'miis', `${this.user.id}.png`),
+            this.overlay.mii.x,
+            this.overlay.mii.y,
+            this.overlay.mii.size,
+            this.overlay.mii.size
+          ).catch(async function () {
+            console.error(
+              `Couldn't render Mii for ${user.id}. Falling back to undefined.`
+            );
+            await this.getAndDrawImageShrink(
+              path.resolve(dataFolder, 'miis', 'guests', `undefined.png`),
+              this.overlay.mii.x,
+              this.overlay.mii.y,
+              this.overlay.mii.size,
+              this.overlay.mii.size
+            );
+          }));
     }
   }
 
@@ -470,12 +471,12 @@ class Tag extends events.EventEmitter {
   // }
 
   async loadFont(file) {
-    var font = JSON.parse(
+    const font = JSON.parse(
       fs.readFileSync(path.resolve(dataFolder, 'fonts', file))
     );
 
-    return new Promise(function (resolve) {
-      for (var style of font.styles) {
+    return new Promise((resolve) => {
+      for (const style of font.styles) {
         Canvas.registerFont(path.resolve(dataFolder, 'fontfiles', style.file), {
           family: font.family,
           weight: style.weight,
@@ -488,24 +489,24 @@ class Tag extends events.EventEmitter {
   }
 
   async loadFonts() {
-    for (var font of fs.readdirSync(path.resolve(dataFolder, 'fonts'))) {
+    for (const font of fs.readdirSync(path.resolve(dataFolder, 'fonts'))) {
       await this.loadFont(font);
     }
   }
 
   loadOverlay(file) {
-    var overlay = JSON.parse(
+    const overlay = JSON.parse(
       fs.readFileSync(path.resolve(dataFolder, 'overlays', file))
     );
 
     this.covStartX = overlay.cover_start_x;
     this.covStartY = overlay.cover_start_y;
 
-    var covertype = this.getCoverType(false);
+    const covertype = this.getCoverType(false);
 
-    if (covertype == 'cover') {
+    if (covertype === 'cover') {
       this.covStartY += 24;
-    } else if (covertype == 'disc') {
+    } else if (covertype === 'disc') {
       this.covStartY += 88;
     }
 
@@ -520,7 +521,7 @@ class Tag extends events.EventEmitter {
 
   async makeBanner() {
     await this.loadFonts();
-    var i = 0;
+    let i = 0;
 
     this.canvas = new Canvas.Canvas(this.overlay.width, this.overlay.height);
     this.ctx = this.canvas.getContext('2d');
@@ -532,13 +533,13 @@ class Tag extends events.EventEmitter {
     await this.drawImage(path.resolve(dataFolder, this.overlay.overlay_img));
 
     // game covers
-    var games_draw = [];
+    const games_draw = [];
 
-    if (this.user.sort.toLowerCase() != 'none') {
+    if (this.user.sort.toLowerCase() !== 'none') {
       for (var game of this.user.games
         .reverse()
         .slice(this.overlay.max_covers * -1)) {
-        if (i < this.overlay.max_covers && game != '') {
+        if (i < this.overlay.max_covers && game !== '') {
           var draw = await this.drawGameCover(game, false);
           if (draw) {
             games_draw.push(game);
@@ -554,8 +555,8 @@ class Tag extends events.EventEmitter {
     for (let j = this.overlay.max_covers; j < this.user.games.length; j++) {
       if (
         games_draw.length < this.overlay.max_covers &&
-        games_draw.length != this.user.games.length &&
-        game != '' &&
+        games_draw.length !== this.user.games.length &&
+        game !== '' &&
         !games_draw.includes(this.user.games.reverse()[j])
       ) {
         var draw = await this.drawGameCover(
@@ -582,7 +583,7 @@ class Tag extends events.EventEmitter {
 
     // coin image/text
     await this.drawImage(
-      path.resolve(dataFolder, 'img', 'coin', this.getCoinImage() + '.png'),
+      path.resolve(dataFolder, 'img', 'coin', `${this.getCoinImage()}.png`),
       this.overlay.coin_icon.x,
       this.overlay.coin_icon.y
     );
@@ -621,11 +622,11 @@ class Tag extends events.EventEmitter {
     );
 
     // avatar
-    if (this.user.useavatar == 'true') {
+    if (this.user.useavatar === 'true') {
       await this.drawAvatar();
     }
 
-    if (this.user.usemii == 'true') {
+    if (this.user.usemii === 'true') {
       await this.drawMii();
     }
 
@@ -657,32 +658,32 @@ class Tag extends events.EventEmitter {
 
 module.exports = Tag;
 
-if (module == require.main) {
-  var jstring = fs.readFileSync(
+if (module === require.main) {
+  const jstring = fs.readFileSync(
     path.resolve(dataFolder, 'debug', 'user1.json')
   );
 
-  var banner = new Tag(jstring, true);
-  var maxbanner = new Tag(jstring, false);
+  const banner = new Tag(jstring, true);
+  const maxbanner = new Tag(jstring, false);
 
-  banner.once('done', function () {
-    var out = fs.createWriteStream(
+  banner.once('done', () => {
+    const out = fs.createWriteStream(
       path.resolve(dataFolder, 'debug', 'user1.png')
     );
-    var stream = banner.pngStream;
+    const stream = banner.pngStream;
 
-    stream.on('data', function (chunk) {
+    stream.on('data', (chunk) => {
       out.write(chunk);
     });
   });
 
-  maxbanner.once('done', function () {
-    var out = fs.createWriteStream(
+  maxbanner.once('done', () => {
+    const out = fs.createWriteStream(
       path.resolve(dataFolder, 'debug', 'user1.max.png')
     );
-    var stream = banner.pngStream;
+    const stream = banner.pngStream;
 
-    stream.on('data', function (chunk) {
+    stream.on('data', (chunk) => {
       out.write(chunk);
     });
   });

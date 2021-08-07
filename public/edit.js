@@ -1,6 +1,6 @@
-var uidRegex = /uid=([0-9]*);?/;
-var uid = uidRegex.exec(document.cookie)[1];
-var user = getUser();
+const uidRegex = /uid=(\d*);?/;
+const uid = uidRegex.exec(document.cookie)[1];
+const user = getUser();
 
 const guests = {
   a: 'Guest A',
@@ -13,8 +13,8 @@ const guests = {
 const guestList = Object.keys(guests);
 
 function showPassword(inputBoxID, inputButtonID) {
-  var x = document.getElementById(inputBoxID);
-  var y = document.getElementById(inputButtonID);
+  const x = document.getElementById(inputBoxID);
+  const y = document.getElementById(inputButtonID);
   if (x.type == 'password') {
     x.type = 'text';
     y.value = 'Hide Key';
@@ -25,8 +25,8 @@ function showPassword(inputBoxID, inputButtonID) {
 }
 
 function httpFetch(uri) {
-  var res = null;
-  var x = new XMLHttpRequest();
+  let res = null;
+  const x = new XMLHttpRequest();
   x.open('GET', uri, false);
   x.send();
   if (x.status == 200) {
@@ -40,64 +40,56 @@ function getOverlay(overlayFile) {
 }
 
 function getUser() {
-  var j = httpFetch(`/users/${uid}.json`);
+  const j = httpFetch(`/users/${uid}.json`);
   if (j) {
     return JSON.parse(j);
-  } else {
+  } 
     return null;
-  }
+  
 }
 
-var sel = document.getElementById('background');
-var sel2 = document.getElementById('flag');
-var sel3 = document.getElementById('overlay');
-var sel4 = document.getElementById('coin');
-var sel6 = document.getElementById('font');
-var sel7 = document.getElementById('mii-select');
-var sel8 = document.getElementById('guest-select');
+const sel = document.getElementById('background');
+const sel2 = document.getElementById('flag');
+const sel3 = document.getElementById('overlay');
+const sel4 = document.getElementById('coin');
+const sel6 = document.getElementById('font');
+const sel7 = document.getElementById('mii-select');
+const sel8 = document.getElementById('guest-select');
 
-var miiUploadButton = document.getElementById('mii-upload');
+const miiUploadButton = document.getElementById('mii-upload');
 
 sel.onchange = function () {
-  document.getElementById('background-img').src = '/' + this.value;
+  document.getElementById('background-img').src = `/${  this.value}`;
 };
 
 sel2.onchange = function () {
-  document.getElementById('flag-img').src = '/flags/' + this.value + '.png';
+  document.getElementById('flag-img').src = `/flags/${  this.value  }.png`;
 };
 
 sel3.onchange = function () {
-  var cimg;
+  let cimg;
   document.getElementById('overlay-img').src =
-    '/img/overlays/' + this.value.replace('.json', '') + '.png';
-  var overlay = JSON.parse(getOverlay(`/overlays/${this.value}`));
+    `/img/overlays/${  this.value.replace('.json', '')  }.png`;
+  const overlay = JSON.parse(getOverlay(`/overlays/${this.value}`));
   if (sel4.value == 'default') {
-    cimg = overlay.coin_icon.img + '.png';
-    document.getElementById('coin-img').src = '/img/coin/' + cimg;
+    cimg = `${overlay.coin_icon.img  }.png`;
+    document.getElementById('coin-img').src = `/img/coin/${  cimg}`;
   }
 };
 
 sel4.onchange = function () {
-  var cimg;
-  var overlay = JSON.parse(getOverlay(`/overlays/${sel3.value}`));
-  if (this.value == 'default') {
-    cimg = overlay.coin_icon.img + '.png';
-  } else {
-    cimg = this.value + '.png';
-  }
-  document.getElementById('coin-img').src = '/img/coin/' + cimg;
+  let cimg;
+  const overlay = JSON.parse(getOverlay(`/overlays/${sel3.value}`));
+  cimg = this.value == 'default' ? `${overlay.coin_icon.img  }.png` : `${this.value  }.png`;
+  document.getElementById('coin-img').src = `/img/coin/${  cimg}`;
 };
 
 sel6.onchange = function () {
-  var cimg;
-  var overlay = JSON.parse(getOverlay(`/overlays/${sel3.value}`));
+  let cimg;
+  const overlay = JSON.parse(getOverlay(`/overlays/${sel3.value}`));
   console.log(this.value);
-  if (this.value == 'default') {
-    cimg = overlay.username.font_family + '.png';
-  } else {
-    cimg = this.value + '.png';
-  }
-  document.getElementById('font-img').src = '/img/font/' + cimg;
+  cimg = this.value == 'default' ? `${overlay.username.font_family  }.png` : `${this.value  }.png`;
+  document.getElementById('font-img').src = `/img/font/${  cimg}`;
 };
 
 sel7.onchange = function () {
@@ -170,8 +162,7 @@ sel8.onchange = function () {
     document.getElementById('mii-data').value = this.value;
     document.getElementById('mii-number').value = '';
     miiImg.src = `/miis/guests/${this.value}.png`;
-  } else {
-    if (guestList.includes(user.mii_data)) {
+  } else if (guestList.includes(user.mii_data)) {
       miiImg.src = `/miis/guests/${user.mii_data}.png`;
     } else if (
       user.mii_data == '' ||
@@ -184,14 +175,13 @@ sel8.onchange = function () {
     } else {
       miiImg.src = `http://miicontestp.wii.rc24.xyz/cgi-bin/render.cgi?data=${user.mii_data}`;
     }
-  }
 };
 
-var miiUploadBox = document.getElementById('mii-box');
-var miiEntryNumberBox = document.getElementById('mii-number');
-var miiGen2 = document.getElementById('mii-gen2');
+const miiUploadBox = document.getElementById('mii-box');
+const miiEntryNumberBox = document.getElementById('mii-number');
+const miiGen2 = document.getElementById('mii-gen2');
 var miiGuest = document.getElementById('guest-selection');
-var miiErrorBox = document.getElementById('mii-error-box');
+const miiErrorBox = document.getElementById('mii-error-box');
 var miiGuest = document.getElementById('guest-selection');
 
 function unhideMiiUpload() {
@@ -246,13 +236,13 @@ function showMiiSuccess() {
 }
 
 document.getElementById('mii-QRfile').onchange = async function () {
-  let formData = new FormData();
-  var data = document.getElementById('mii-QRfile').files[0];
+  const formData = new FormData();
+  const data = document.getElementById('mii-QRfile').files[0];
   formData.append('platform', 'gen2');
   formData.append('data', data);
   hideMiiError();
   try {
-    let r = await fetch('https://miicontestp.wii.rc24.xyz/cgi-bin/studio.cgi', {
+    const r = await fetch('https://miicontestp.wii.rc24.xyz/cgi-bin/studio.cgi', {
       method: 'POST',
       body: formData,
     })
@@ -263,44 +253,42 @@ document.getElementById('mii-QRfile').onchange = async function () {
     document.getElementById('mii-data').value = mii;
     miiImg.src = `https://studio.mii.nintendo.com/miis/image.png?data=${mii}&amp;type=face&amp;width=512&amp;bgColor=FFFFFF00`;
     showMiiSuccess();
-  } catch (e) {
-    if (e instanceof TypeError) {
+  } catch (error) {
+    if (error instanceof TypeError) {
       showMiiError('Unable to use this QR code. Try again!');
     } else {
-      console.log('Error when fetching', e);
+      console.log('Error when fetching', error);
     }
   }
 };
 
 document.getElementById('mii-file').onchange = function () {
-  var file = document.getElementById('mii-file').files[0];
+  const file = document.getElementById('mii-file').files[0];
   hideMiiError();
   if (!file) {
     console.log('No file');
     showMiiError('No file has been selected.');
     return;
   }
-  var reader = new FileReader();
+  const reader = new FileReader();
   reader.onload = function () {
-    var buffer = reader.result;
+    const buffer = reader.result;
     if (buffer.byteLength != 74) {
       console.log('Not a mii');
       showMiiError('The file selected is not a valid Mii.');
       return;
     }
-    var dv = new DataView(buffer, 0);
-    var byteArray = [];
-    for (var i = 0; i < 74; i++) {
+    const dv = new DataView(buffer, 0);
+    const byteArray = [];
+    for (let i = 0; i < 74; i++) {
       byteArray.push(dv.getUint8(i));
     }
-    var hexString = Array.from(byteArray, function (byte) {
-      return ('0' + (byte & 0xff).toString(16)).slice(-2);
-    }).join('');
+    const hexString = [...byteArray].map((byte) => (`0${  (byte & 0xff).toString(16)}`).slice(-2)).join('');
     document.getElementById('mii-data').value = hexString;
-    var miiImg = '';
+    const miiImg = '';
     miiImg.src = `http://miicontestp.wii.rc24.xyz/cgi-bin/render.cgi?data=${hexString}`;
     showMiiSuccess();
-    console.log('Set data to ' + hexString);
+    console.log(`Set data to ${  hexString}`);
   };
   reader.readAsArrayBuffer(file);
 };

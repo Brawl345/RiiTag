@@ -12,6 +12,8 @@ module.exports = {
   },
   reportUnusedDisableDirectives: true,
   rules: {
+    'class-methods-use-this': 'off',
+    'no-console': 'off',
     'no-nested-ternary': 'off',
     'no-underscore-dangle': 'off',
     'no-unused-expressions': [
