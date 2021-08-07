@@ -50,7 +50,7 @@ module.exports = {
     'unicorn/no-unsafe-regex': 'error',
     'unicorn/no-useless-undefined': 'error',
     'unicorn/no-zero-fractions': 'error',
-    'unicorn/number-literal-case': 'error',
+    'unicorn/number-literal-case': 'off',
     'unicorn/numeric-separators-style': 'off',
     'unicorn/prefer-array-find': 'error',
     'unicorn/prefer-array-flat': 'error',
