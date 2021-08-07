@@ -1,5 +1,5 @@
-const fs = require("fs");
-const Canvas = require("canvas");
+const fs = require('fs');
+const Canvas = require('canvas');
 const Image = Canvas.Image;
 
 async function savePNG(out, c) {
@@ -7,13 +7,13 @@ async function savePNG(out, c) {
     var t;
     c.createPNGStream()
       .pipe(fs.createWriteStream(out))
-      .on("close", function () {
+      .on('close', function () {
         clearTimeout(t);
         resolve();
       });
 
     t = setTimeout(() => {
-      console.log(out + " - savePNG Timed Out");
+      console.log(out + ' - savePNG Timed Out');
       reject();
     }, 7500);
   });
@@ -32,7 +32,7 @@ async function getImage(source) {
       reject(err);
     };
     t = setTimeout(() => {
-      console.log(source + " - getImage Timed Out");
+      console.log(source + ' - getImage Timed Out');
       reject();
     }, 7500);
     console.log(source);

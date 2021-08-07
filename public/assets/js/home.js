@@ -1,3 +1,3 @@
-var carousel = $("img[id=tag-img]");
+var carousel = $('img[id=tag-img]');
 
 carousel.forEach((image) => {});

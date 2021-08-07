@@ -45,7 +45,7 @@ class PageManager {
 class Page {
   constructor(manager, id) {
     this.id = id;
-    this.buttonId = id + "-btn";
+    this.buttonId = id + '-btn';
     this.manager = manager;
 
     this.div = document.getElementById(id);
@@ -66,11 +66,11 @@ class Page {
   }
 
   show() {
-    this.div.style = "";
+    this.div.style = '';
   }
 
   hide() {
-    this.div.style = "display: none;";
+    this.div.style = 'display: none;';
   }
 
   onButtonClick() {

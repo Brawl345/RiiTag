@@ -3,7 +3,7 @@
 //
 // Modified to fit the needs of this project.
 
-const sqlite = require("sqlite3");
+const sqlite = require('sqlite3');
 
 class DatabaseDriver {
   constructor(filename) {
@@ -13,22 +13,22 @@ class DatabaseDriver {
   async create(table, fields) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
     await db.run(
-      `CREATE TABLE IF NOT EXISTS \`${table}\`(${fields.join(", ")})`
+      `CREATE TABLE IF NOT EXISTS \`${table}\`(${fields.join(', ')})`
     );
   }
 
   async insert(table, fields, values) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     await db.run(
       `INSERT INTO \`${table}\`(\`${fields.join(
-        "`, `"
+        '`, `'
       )}\`) VALUES('${values.join("', '")}')`
     );
   }
@@ -36,7 +36,7 @@ class DatabaseDriver {
   async delete(table, key, value) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
     await db.run(`DELETE FROM \`${table}\` WHERE \`${key}\`="${value}"`);
   }
@@ -46,7 +46,7 @@ class DatabaseDriver {
     // var results;
 
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     var query = await new Promise(function (resolve, reject) {
@@ -70,7 +70,7 @@ class DatabaseDriver {
     var driver = this;
 
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     var query = await new Promise(function (resolve, reject) {
@@ -94,7 +94,7 @@ class DatabaseDriver {
   async getTableSorted(table, key, desc) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
     if (!desc) {
       return await this.all(`SELECT * FROM \`${table}\` ORDER BY \`${key}\``);
@@ -108,7 +108,7 @@ class DatabaseDriver {
   async updateTable(table, key, value, userKey, userValue) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     await db.run(
@@ -120,7 +120,7 @@ class DatabaseDriver {
     var db = await this.dbPromise;
 
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     await db.run(sql);
@@ -130,7 +130,7 @@ class DatabaseDriver {
     var db = await this.dbPromise;
 
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     return await new Promise(function (resolve, reject) {
@@ -147,7 +147,7 @@ class DatabaseDriver {
   async increment(table, key, value, incKey) {
     var db = await this.dbPromise;
     if (!db) {
-      console.error("Cannot access a non-existent database.");
+      console.error('Cannot access a non-existent database.');
     }
 
     return await new Promise(function (resolve, reject) {
