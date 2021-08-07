@@ -7,7 +7,9 @@
     "test": "node src/index.js",
     "start": "node app.js",
     "lint:style": "prettier --check .",
-    "fix:style": " prettier --write ."
+    "lint:js": "eslint .",
+    "fix:style": "prettier --write .",
+    "fix:js": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -23,6 +25,11 @@
   },
   "homepage": "https://github.com/RiiConnect24/riitag#readme",
   "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-unicorn": "^35.0.0",
     "prettier": "2.3.2"
   },
   "dependencies": {
